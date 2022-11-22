@@ -8,12 +8,13 @@
 int main()
 {
     //n Define o numero de items que podem ser postos dentro da mala
-    int n;
+    int num_items;
     //weight é o peso maximo que a mala pode levar
     int weight;
     //A matriz values vai ser do tamanho do numere de items e vai guarda as combinações de pares
     //que vem no ficheiro de texto  
-    int values[n][50];
+    int values[50];
+    int weights[50];
 
     //Vai criar a memoria partilhada
     int size = 64;
@@ -21,16 +22,24 @@ int main()
     int visibility = MAP_ANONYMOUS | MAP_SHARED;
     void *shmem = mmap(NULL, size, protection, visibility, 0, 0);
 
+
+
     return 0;
 }
 
-//Função de apoio que vai fazer a soma dos valores dos pares e vai retornar o resultado para
-//depois ser comparada com o valor da solução na memoria partilhada. 
-int calc_weight_sum(int values[]){
-    int result = 0;
-    int arr_size = sizeof(values)/sizeof(values[0]);
-    for (int i; i < arr_size; i++){
-        int result = result + values[i];
+//Resolve o problema e devolve um valor para cada processo depois comparar com a solução do ficheiro
+//e puder colocar em memória partilhada
+int sol_kp(int weight, int weights[], int values[], int num_items){
+    if (num_items == 0 || weight == 0){
+        return 0;
     }
-    return result;
+
+    if(weights[num_items - 1] > weight){
+        return sol_kp(weight, weights, values, num_items - 1);
+    }
+    else {
+        return max(values[num_items - 1] + sol_kp(weight - weights[num_items - 1], weight, values, num_items - 1), sol_kp(weight, weights, values, num_items - 1));
+    }
 }
+
+int max(int x, int y){return (x > y) ? x : y;}
