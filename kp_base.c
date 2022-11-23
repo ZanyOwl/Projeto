@@ -7,10 +7,12 @@
 
 int main()
 {
-    //n Define o numero de items que podem ser postos dentro da mala
-    int num_items;
+    //num_items Define o numero de items que podem ser postos dentro da mala
+    int num_items = 0;
     //weight é o peso maximo que a mala pode levar
-    int weight;
+    int weight = 0;
+    //processes define o numero de processos que vão ser criados
+    int processes = 0;
     //A matriz values vai ser do tamanho do numere de items e vai guarda as combinações de pares
     //que vem no ficheiro de texto  
     int values[50];
@@ -22,7 +24,15 @@ int main()
     int visibility = MAP_ANONYMOUS | MAP_SHARED;
     void *shmem = mmap(NULL, size, protection, visibility, 0, 0);
 
-
+    for(int i = 0; i < processes; i++){
+        if (fork() == 0){
+            int result = sol_kb(weight, weights, values, num_items);
+            //aqui vaí fazer a comparação do valor que o child recebeu com o valor da shared mem
+        } else {
+            int result = sol_kb(weight, weights, values, num_items);
+            //aqui vaí fazer a comparação do valor que o child recebeu com o valor da shared mem
+        }
+    }
 
     return 0;
 }
