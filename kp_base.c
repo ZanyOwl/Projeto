@@ -13,6 +13,8 @@ int main()
     int weight = 0;
     //processes define o numero de processos que vão ser criados
     int processes = 1;
+    //time define o tempo que o programa vai correr
+    int time = 0;
     //O array values vai guardar os valores de cada item 
     int values[50];
     //o array weights vai guardar os pesos dos items
@@ -24,12 +26,23 @@ int main()
     int visibility = MAP_ANONYMOUS | MAP_SHARED;
     void *shmem = mmap(NULL, size, protection, visibility, 0, 0);
 
+    sem_unlink("mymutex");
+    sem_t *sem1 = sem_open("mymutex", O_CREAT, 0644, 1);
+
     for(int i = 0; i < processes; i++){
         if (fork() == 0){
-            int result = sol_kb(weight, weights, values, num_items);
             //vai correr o algoritemo durante o tempo pedido no comando
             //Vai fazer isto com um loop while
             //A cada solução que encontrar, vai fazer o output "Child x has found solution y at time z"
+            while(1){
+                int result = sol_kb(weight, weights, values, num_items);
+                sem_wait(sem1);
+                if(result < shmem){
+                    shmem = result;
+                    printf("%s%i%s%i%s%i", "Child", getpid(),"has foand a solution: ", result, "at time", time);
+                }
+                result = 0;
+            }
         } else {
             //vai matar os filhos
         }
