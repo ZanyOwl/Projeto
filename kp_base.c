@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
         return -1;
     }
     //num_items Define o numero de items que podem ser postos dentro da mala
-    int num_items = 0;
+    int num_items;
+    fscanf(testFile, "%d", &num_items);
     //weight é o peso maximo que a mala pode levar
     int weight = 0;
     //processes define o numero de processos que vão ser criados
@@ -62,7 +63,7 @@ int main(int argc, char *argv[])
                 sem_wait(sem1);
                 if(result < shmem){
                     shmem = result;
-                    printf("%s%i%s%i%s%i", "Child", getpid(),"has foand a solution: ", result, "at time", time);
+                    printf("%s%d%s%d%s%d", "Child", getpid(),"has foand a solution: ", result, "at time", time);
                 }
                 sem_post(sem1);
                 result = 0;
